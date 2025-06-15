@@ -1,0 +1,32 @@
+# Ignore compiled classes
+*.class
+
+# Ignore log files
+*.log
+
+# Ignore local database files
+*.db
+
+# Ignore OS files
+.DS_Store
+Thumbs.db
+
+# Ignore IDE settings
+.idea/
+*.iml
+.vscode/
+
+# Ignore build output
+/out/
+build/
+target/
+
+# Ignore Maven wrapper logs
+.mvn/
+!/.mvn/wrapper/maven-wrapper.jar
+
+# Ignore MySQL credentials file if you create one
+db.properties
+
+# Ignore generated docs
+doc/
