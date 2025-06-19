@@ -24,6 +24,7 @@
             <version>8.0.33</version>
         </dependency>
 
+
         <!-- ✅ JavaFX Controls -->
         <dependency>
             <groupId>org.openjfx</groupId>

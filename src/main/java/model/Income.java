@@ -43,4 +43,7 @@ public class Income {
     public void setDate(String date) {
         this.date = date;
     }
+    public String toString() {
+        return "Income{id=" + id + ", amount=" + amount + ", source='" + source + "', date='" + date + "'}";
+    }
 }

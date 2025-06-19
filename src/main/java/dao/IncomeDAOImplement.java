@@ -5,7 +5,7 @@ import java.util.List;
 import db.*;
 import model.Income;
 
-public abstract class IncomeDAOImplement implements IncomeDAO{
+public  class IncomeDAOImplement implements IncomeDAO{
     private Connection conn;
     public IncomeDAOImplement(Connection conn){
         this.conn = conn;
@@ -46,10 +46,10 @@ public abstract class IncomeDAOImplement implements IncomeDAO{
     }
 
     @Override
-    public Income getIncomeById(int id) {
-        String sql = "select * from income where id = ?";
+    public Income getIncomeBydate(String date) {
+        String sql = "select * from income where date = ?";
         try(PreparedStatement prept = conn.prepareStatement(sql)){
-            prept.setInt(1,id);
+            prept.setString(1,date);
             ResultSet rs = prept.executeQuery();
             while(rs.next()){
                 Income income = new Income(
@@ -67,7 +67,29 @@ public abstract class IncomeDAOImplement implements IncomeDAO{
         }
 
     @Override
-    public void updateIncome(int id) {
-        String sql  = ""
+    public void updateIncome(Income income) {
+        String sql = "UPDATE income SET amount = ?, source = ?, date = ? WHERE id = ?";
+        try (PreparedStatement prept = conn.prepareStatement(sql)) {
+            prept.setDouble(1, income.getAmount());
+            prept.setString(2, income.getSource());
+            prept.setString(3, income.getDate());
+            prept.setInt(4, income.getId());
+            prept.executeUpdate();
+            System.out.println("Income updated successfully.");
+        } catch (SQLException e) {
+            System.out.println(e.getMessage());;
+        }
+    }
+
+    @Override
+    public void deleteIncome(int id) {
+        String sql = "DELETE FROM income WHERE id = ?";
+        try (PreparedStatement prept = conn.prepareStatement(sql)) {
+            prept.setInt(1, id);
+            prept.executeUpdate();
+            System.out.println("Income deleted successfully.");
+        } catch (SQLException e) {
+            System.out.println(e.getMessage());
+        }
     }
 }
