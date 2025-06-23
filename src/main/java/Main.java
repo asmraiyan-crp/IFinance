@@ -4,6 +4,7 @@ import model.Income;
 import java.util.List;
 import java.sql.Connection;
 import java.util.Scanner;
+import java.time.LocalDate;
 
 public class Main {
     public static void main(String[] args) {
@@ -15,8 +16,7 @@ public class Main {
             double amount = sc.nextDouble();sc.nextLine();
             System.out.println("Enter the source: ");
             String source = sc.nextLine();
-            System.out.println("Enter the date: ");
-            String date = sc.nextLine();
+            LocalDate date = LocalDate.now();
             Income income = new Income(amount,source,date);
             incomedao.addincome(income);
             incomedao.deleteIncome(2);
@@ -24,7 +24,11 @@ public class Main {
             for( Income inc : allincome){
                 System.out.println(inc);
             }
-
+            System.out.println("Enter the date you want see Year->Month->Day");
+            int y = sc.nextInt();int m =sc.nextInt();int d = sc.nextInt();
+            List<Income> inc = incomedao.getIncomeBydate(y,m,d);
+            for(Income in : inc){
+            System.out.println(in);}
 
         }catch(Exception e){
             System.out.println(e.getMessage());

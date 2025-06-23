@@ -31,10 +31,10 @@ public  class IncomeDAOImplement implements IncomeDAO{
         String sql = "select * from income";
         try(Statement st = conn.createStatement();ResultSet rs = st.executeQuery(sql)){
             while(rs.next()){
-                Income income = new Income(
-                rs.getDouble("amount"),
-                rs.getString("source"),
-                rs.getString("date"));
+                Income income = new Income();
+                income.setAmount(rs.getDouble("amount"));
+                income.setSource(rs.getString("source"));
+                income.setDate(rs.getString("date"));
 
             income.setId(rs.getInt("id"));
             incomelist.add(income);}
@@ -46,25 +46,26 @@ public  class IncomeDAOImplement implements IncomeDAO{
     }
 
     @Override
-    public Income getIncomeBydate(String date) {
-        String sql = "select * from income where date = ?";
-        try(PreparedStatement prept = conn.prepareStatement(sql)){
-            prept.setString(1,date);
+    public List<Income> getIncomeBydate(int year, int month, int day) {
+        List<Income> list = new ArrayList<>();
+        String formattedDate = String.format("%04d-%02d-%02d", year, month, day);
+        String sql = "SELECT * FROM income WHERE date = ?";
+        try (PreparedStatement prept = conn.prepareStatement(sql)) {
+            prept.setString(1, formattedDate);
             ResultSet rs = prept.executeQuery();
-            while(rs.next()){
-                Income income = new Income(
-                        rs.getDouble("amount"),
-                        rs.getString("source"),
-                        rs.getString("date")
-                );
+            while (rs.next()) {
+                Income income = new Income();
                 income.setId(rs.getInt("id"));
-                return income;
+                income.setAmount(rs.getDouble("amount"));
+                income.setSource(rs.getString("source"));
+                income.setDate(rs.getString("date"));
+                list.add(income);
             }
         } catch (SQLException e) {
-            System.out.println(e.getMessage());;
+            System.out.println(e.getMessage());
         }
-        return null;
-        }
+        return list;
+    }
 
     @Override
     public void updateIncome(Income income) {

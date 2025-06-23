@@ -28,18 +28,80 @@ public class DBConnection {
                         "CREATE TABLE IF NOT EXISTS income (" +
                                 "id INT AUTO_INCREMENT PRIMARY KEY, " +
                                 "amount DOUBLE NOT NULL, " +
-                                "source VARCHAR(255), " +
                                 "date VARCHAR(50))"
                 );
 
-                // Create expense table
+                // Create transport table
                 dbStmt.executeUpdate(
-                        "CREATE TABLE IF NOT EXISTS expense (" +
+                        "CREATE TABLE IF NOT EXISTS transport (" +
                                 "id INT AUTO_INCREMENT PRIMARY KEY, " +
+                                "date VARCHAR(50), "+
                                 "amount DOUBLE NOT NULL, " +
-                                "category VARCHAR(255), " +
-                                "date VARCHAR(50), " +
                                 "note TEXT)"
+                );
+                // Create education table
+                dbStmt.executeUpdate(
+                        "CREATE TABLE IF NOT EXISTS education (" +
+                                "id INT AUTO_INCREMENT PRIMARY KEY, " +
+                                "date VARCHAR(50), " +
+                                "amount DOUBLE NOT NULL, " +
+                                "note TEXT)"
+                );
+                //Create food table
+                dbStmt.executeUpdate(
+                        "CREATE TABLE IF NOT EXISTS food (" +
+                                "id INT AUTO_INCREMENT PRIMARY KEY, " +
+                                "date VARCHAR(50), " +
+                                "amount DOUBLE NOT NULL, " +
+                                "note TEXT)"
+                );
+                //Create tour table
+                dbStmt.executeUpdate(
+                        "CREATE TABLE IF NOT EXISTS tour (" +
+                                "id INT AUTO_INCREMENT PRIMARY KEY, " +
+                                "date VARCHAR(50), " +
+                                "amount DOUBLE NOT NULL, "+
+                                "note TEXT)"
+                );
+                //Create household table
+                dbStmt.executeUpdate(
+                        "CREATE TABLE IF NOT EXISTS household (" +
+                                "id INT AUTO_INCREMENT PRIMARY KEY, " +
+                                "date VARCHAR(50), " +
+                                "amount DOUBLE NOT NULL, " +
+                                "note TEXT)"
+                );
+                //Create refreshment table
+                dbStmt.executeUpdate(
+                        "CREATE TABLE IF NOT EXISTS refreshment (" +
+                                "id INT AUTO_INCREMENT PRIMARY KEY, " +
+                                "date VARCHAR(50), " +
+                                "amount DOUBLE NOT NULL, " +
+                                "note TEXT)"
+                );
+                //Create loan table
+                dbStmt.executeUpdate(
+                        "CREATE TABLE IF NOT EXISTS loan (" +
+                                "id INT AUTO_INCREMENT PRIMARY KEY, " +
+                                "date VARCHAR(50), " +
+                                "amount DOUBLE NOT NULL, " +
+                                "note TEXT)"
+                );
+                //Create others table
+                dbStmt.executeUpdate(
+                        "CREATE TABLE IF NOT EXISTS others (" +
+                                "id INT AUTO_INCREMENT PRIMARY KEY, " +
+                                "date VARCHAR(50), " +
+                                "amount DOUBLE NOT NULL, " +
+                                "note TEXT)"
+                );
+                dbStmt.executeUpdate(
+                        "create table if not exists monthly_summery("+
+                                "year INT not null"+
+                                "month int not null"+
+                                "income double not null"+
+                                "expence double not null"+
+                                "savings double not null"
                 );
 
                 System.out.println("✅ Database and tables are ready!");

@@ -6,7 +6,7 @@ import java.util.List;
 public interface IncomeDAO {
     void addincome(Income income);
     List<Income> getAllIncome();
-    Income getIncomeBydate(String date);
+    List<Income> getIncomeBydate(int year,int month,int day);
     void updateIncome(Income income);
     void deleteIncome(int id);
 }
