@@ -1,20 +1,24 @@
 package model;
-
+import java.time.LocalDate;
 public class Income {
     private int id;
     private double amount;
     private String source;
     private String  date;
 
-    public Income(int id, double amount, String source, String date) {
+    public Income(){}
+    public Income(int id, double amount, String source, LocalDate date) {
         this.id = id;
         this.amount = amount;
         this.source = source;
-        this.date = date;
+        this.date = date.toString();
     }
 
-    public Income(double amount, String source, String date) {
-        this(0, amount, source, date);
+    public Income(double amount, String source, LocalDate date) {
+        this.id = 0;
+        this.amount = amount;
+        this.source = source;
+        this.date = date.toString();
     }
 
     // Getters and Setters
@@ -40,7 +44,13 @@ public class Income {
     public void setSource(String source) {
         this.source = source;
     }
-    public void setDate(String date) {
+    public void setDate(LocalDate date) {
+        this.date = date.toString();
+    }
+    public  void setDate(String date){
         this.date = date;
+    }
+    public String toString() {
+        return "Income{id=" + id + ", amount=" + amount + ", source='" + source + "', date='" + date + "'}";
     }
 }

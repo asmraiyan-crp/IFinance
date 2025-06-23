@@ -1,30 +1,35 @@
-package maedel;
+package model;
 public class Expence {
-  private int id;
-  private double amount;
-  private String source;
-  private String  date;
-  public Expence (int id,double amount, String source,String date){
-    this.id = id;
-    this.amount = amount;
-    this.source = source;
-    this.date = date;
-  }
-  public Eexpence (double amount , String source,String date){
-    this(0,amount, source,date)
-  }
-  //getters and setters
-  public int getId() {
+    private int id;
+    private double amount;
+    private String category;
+    private String  date;
+    private String note;
+    public  Expence(){}
+    public Expence (int id,double amount, String category,String date,String note){
+        this.id = id;
+        this.amount = amount;
+        this.category = category;
+        this.date = date;
+    }
+    public Expence (double amount , String category,String date,String note){
+        this(0,amount, category,date,note);
+    }
+    //getters and setters
+    public int getId() {
         return id;
     }
     public double getAmount() {
         return amount;
     }
-    public String getSource() {
-        return source;
+    public String getCategory() {
+        return category;
     }
     public String getDate() {
         return date;
+    }
+    public String getNote(){
+        return note;
     }
 
     public void setId(int id) {
@@ -33,11 +38,14 @@ public class Expence {
     public void setAmount(double amount) {
         this.amount = amount;
     }
-    public void setSource(String source) {
-        this.source = source;
+    public void setCategory(String source) {
+        this.category = source;
     }
     public void setDate(String date) {
         this.date = date;
     }
+
+    public void setNote(String note) {
+        this.note = note;
+    }
 }
-  
