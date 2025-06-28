@@ -1,22 +1,29 @@
 package org.example.ifinance.demo;
 
 import javafx.application.Application;
+import javafx.beans.property.ReadOnlyObjectWrapper;
+import javafx.beans.property.ReadOnlyStringWrapper;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.geometry.Insets;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
-import javafx.scene.layout.*;
+import javafx.scene.layout.BorderPane;
+import javafx.scene.layout.HBox;
+import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
+import org.example.ifinance.demo.dao.*;
+import org.example.ifinance.demo.db.DBConnection;
+import org.example.ifinance.demo.model.Expence;
+import org.example.ifinance.demo.model.Income;
+import org.example.ifinance.demo.utils.Monthly_Smmery;
 
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
-import java.sql.*;
-
-import org.example.ifinance.demo.db.DBConnection;
-import org.example.ifinance.demo.model.*;
-import org.example.ifinance.demo.dao.*;
-import org.example.ifinance.demo.utils.Monthly_Smmery;
 
 public class HelloApplication extends Application {
     private double totalSavings = 0;
@@ -35,6 +42,9 @@ public class HelloApplication extends Application {
             dbConnection = DBConnection.getConnection(); // connect to DB
             incomeDAO = new IncomeDAOImplement(dbConnection); // initialize DAO
             expenceDAO = new ExpenceDAOImplement(dbConnection); // initialize expense DAO
+            Monthly_Smmery m = new Monthly_Smmery();
+            m.monthlySummaryAndReset(dbConnection);
+
         } catch (Exception e) {
             System.out.println(e.getMessage());
         }
@@ -250,70 +260,81 @@ public class HelloApplication extends Application {
         return form;
     }
 
+
     private VBox createMonthlyReportForm() {
         VBox form = new VBox(15);
         form.setPadding(new Insets(20));
 
         ComboBox<Integer> monthBox = new ComboBox<>();
         monthBox.setPromptText("Select Month");
-        for(int i =1;i<=12;i++){
-            monthBox.getItems().add(i);
-        }
+        for (int i = 1; i <= 12; i++) monthBox.getItems().add(i);
 
         ComboBox<Integer> yearBox = new ComboBox<>();
         yearBox.setPromptText("Select Year");
         int currentYear = LocalDate.now().getYear();
-        for (int i = currentYear - 5; i <= currentYear + 5; i++) {
-            yearBox.getItems().add(i);
-        }
+        for (int y = currentYear - 5; y <= currentYear + 5; y++) yearBox.getItems().add(y);
 
         Button generateBtn = new Button("Generate Report");
         generateBtn.setStyle("-fx-background-color: #2196f3; -fx-text-fill: white;");
+
+        // Table for per-category breakdown
+        TableView<CategoryExpense> catTable = new TableView<>();
+        catTable.setPrefHeight(200);
+        TableColumn<CategoryExpense,String> colCat = new TableColumn<>("Category");
+        colCat.setCellValueFactory(c -> new ReadOnlyStringWrapper(c.getValue().category));
+        colCat.setPrefWidth(150);
+        TableColumn<CategoryExpense,Double> colAmt = new TableColumn<>("Amount");
+        colAmt.setCellValueFactory(c -> new ReadOnlyObjectWrapper<>(c.getValue().amount));
+        colAmt.setPrefWidth(150);
+        catTable.getColumns().setAll(colCat, colAmt);
 
         VBox reportArea = new VBox(10);
 
         generateBtn.setOnAction(e -> {
             Integer month = monthBox.getValue();
-            Integer year = yearBox.getValue();
+            Integer year  = yearBox.getValue();
             if (month == null || year == null) {
                 reportArea.getChildren().setAll(new Label("Please select both month and year"));
                 return;
             }
 
-            int monthValue = monthBox.getItems().indexOf(month) + 1;
-
-            String query = "SELECT * FROM monthly_summery WHERE year = ? AND month = ?";
-            try (PreparedStatement ps = dbConnection.prepareStatement(query)) {
-                ps.setInt(1, year);
-                ps.setInt(2, monthValue);
-                ResultSet rs = ps.executeQuery();
-
-                if (rs.next()) {
-                    double income = rs.getDouble("income");
-                    double expense = rs.getDouble("expence");
-                    double savings = rs.getDouble("savings");
-
-                    reportArea.getChildren().setAll(
-                            new Label("Month: " + month + " " + year),
-                            new Label(String.format("Total Income: $%.2f", income)),
-                            new Label(String.format("Total Expense: $%.2f", expense)),
-                            new Label(String.format("Net Savings: $%.2f", savings))
-                    );
-                } else {
-                    reportArea.getChildren().setAll(new Label("No data found for selected month."));
-                }
-            } catch (SQLException ex) {
-                reportArea.getChildren().setAll(new Label("Error fetching report: " + ex.getMessage()));
+            // 1) Overall totals via DAOs
+            double income  = incomeDAO.getTotalIncomeByMonth(year, month);
+            double expense = 0;
+            for (String cat : new String[]{
+                    "Education","Transport","Household","Tour","Refreshment","Food","Others"
+            }) {
+                expense += expenceDAO.getTotalExpenseByCategoryAndMonth(cat, year, month);
             }
+            double savings = income - expense;
+
+            // 2) Summary labels
+            Label header    = new Label("Month: " + month + " " + year);
+            Label incLabel  = new Label(String.format("Total Income: ৳%.2f", income));
+            Label expLabel  = new Label(String.format("Total Expense: ৳%.2f", expense));
+            Label saveLabel = new Label(String.format("Net Savings: ৳%.2f", savings));
+
+            // 3) Populate per-category table
+            ObservableList<CategoryExpense> catData = FXCollections.observableArrayList();
+            for (String cat : new String[]{
+                    "Education","Transport","Household","Tour","Refreshment","Food","Others"
+            }) {
+                double total = expenceDAO.getTotalExpenseByCategoryAndMonth(cat, year, month);
+                catData.add(new CategoryExpense(cat, total));
+            }
+            catTable.setItems(catData);
+
+            // 4) Render
+            reportArea.getChildren().setAll(
+                    header, incLabel, expLabel, saveLabel,
+                    new Label("Breakdown by Category:"), catTable
+            );
         });
 
         form.getChildren().addAll(
-                new Label("Select Month"),
-                monthBox,
-                new Label("Select Year"),
-                yearBox,
-                generateBtn,
-                reportArea
+                new Label("Select Month"), monthBox,
+                new Label("Select Year"),  yearBox,
+                generateBtn, reportArea
         );
         return form;
     }
@@ -341,7 +362,7 @@ public class HelloApplication extends Application {
             transactionBox.setStyle("-fx-border-color: #ddd; -fx-padding: 8px;");
 
             Label typeLabel = new Label(t.type);
-            Label amountLabel = new Label(String.format("$%.2f", t.amount));
+            Label amountLabel = new Label(String.format("৳%.2f", t.amount));
             Label dateLabel = new Label(t.date);
 
             Button deleteBtn = new Button("Delete");
@@ -384,7 +405,7 @@ public class HelloApplication extends Application {
     }
 
     private void refreshSavingsLabel() {
-        savingsLabel.setText(String.format("Total Savings: $%.2f", totalSavings));
+        savingsLabel.setText(String.format("Total Savings: ৳%.2f", totalSavings));
     }
 
     private void loadTransactionsFromDB() {

@@ -145,6 +145,28 @@ public class ExpenceDAOImplement  implements ExpenceDAO{
         return expencelist;
     }
     @Override
+    public double getTotalExpenseByCategoryAndMonth(String category, int year, int month) {
+        String sql = String.format(
+                "SELECT SUM(amount) AS total FROM %s " +
+                        "WHERE YEAR(STR_TO_DATE(date, '%%Y-%%m-%%d')) = ? " +
+                        "  AND MONTH(STR_TO_DATE(date, '%%Y-%%m-%%d')) = ?",
+                category.toLowerCase()
+        );
+        try (PreparedStatement ps = conn.prepareStatement(sql)) {
+            ps.setInt(1, year);
+            ps.setInt(2, month);
+            try (ResultSet rs = ps.executeQuery()) {
+                if (rs.next()) {
+                    return rs.getDouble("total");
+                }
+            }
+        } catch (SQLException e) {
+            System.err.println("Error fetching expense total for " + category + ": " + e.getMessage());
+        }
+        return 0;
+    }
+
+    @Override
     public List<Expence> getAllExpenceOfFood() {
         List<Expence> expencelist = new ArrayList<>();
         String sql = "select * from food";

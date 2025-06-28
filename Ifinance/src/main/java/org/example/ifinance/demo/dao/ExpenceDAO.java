@@ -39,6 +39,7 @@ public interface ExpenceDAO {
 //    void updateHouseholdExpence(Expence expence);
 //    void updateOthersExpence(Expence expence);
 //    void deleteTransportExpence(int id);
+double getTotalExpenseByCategoryAndMonth(String category, int year, int month);
     void deleteEducationExpence(int id);
     void deleteFoodExpence(int id);
     void deleteTourExpence(int id);
