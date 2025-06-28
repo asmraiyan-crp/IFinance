@@ -90,4 +90,24 @@ public class IncomeDAOImplement implements IncomeDAO {
             System.out.println("Error deleting income: " + e.getMessage());
         }
     }
+    @Override
+    public double getTotalIncomeByMonth(int year, int month) {
+        String sql =
+                "SELECT SUM(amount) AS total FROM income " +
+                        "WHERE YEAR(STR_TO_DATE(date, '%Y-%m-%d')) = ? " +
+                        "  AND MONTH(STR_TO_DATE(date, '%Y-%m-%d')) = ?";
+        try (PreparedStatement ps = conn.prepareStatement(sql)) {
+            ps.setInt(1, year);
+            ps.setInt(2, month);
+            try (ResultSet rs = ps.executeQuery()) {
+                if (rs.next()) {
+                    return rs.getDouble("total");
+                }
+            }
+        } catch (SQLException e) {
+            System.err.println("Error fetching monthly income: " + e.getMessage());
+        }
+        return 0;
+    }
+
 }

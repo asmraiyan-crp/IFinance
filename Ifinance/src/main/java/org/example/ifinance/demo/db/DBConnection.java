@@ -8,7 +8,7 @@ import java.sql.Statement;
 public class DBConnection {
     private static final String URL = "jdbc:mysql://localhost:3306/";
     private static final String USER = "root";         // <-- your MySQL username
-    private static final String PASSWORD = "@smsql";   // <-- your MySQL password
+    private static final String PASSWORD = "mimmu5629";   // <-- your MySQL password
     private static final String DB_NAME = "finance_app";
 
     // Call this method once at startup to create DB + tables if needed
