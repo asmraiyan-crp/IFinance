@@ -3,8 +3,8 @@
 Requirements to run the project:
 
 1. IDE- Intellij
-2. JDK minimum requirements- 17.0
-3. JAVAFX minimum requirements- 21
+2. JDK minimum requirement- 17.0
+3. JAVAFX minimum requirement- 21
 4. For Database-(MySQL)
 
 HOW TO RUN:
