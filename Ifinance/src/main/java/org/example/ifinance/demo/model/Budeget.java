@@ -1,1 +1,0 @@
-package org.example.ifinance.demo.model;

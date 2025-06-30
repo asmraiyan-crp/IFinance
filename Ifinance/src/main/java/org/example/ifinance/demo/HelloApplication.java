@@ -17,6 +17,7 @@ import org.example.ifinance.demo.db.DBConnection;
 import org.example.ifinance.demo.model.Expence;
 import org.example.ifinance.demo.model.Income;
 import org.example.ifinance.demo.utils.Monthly_Smmery;
+import org.example.ifinance.demo.model.Transaction;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -32,6 +33,7 @@ public class HelloApplication extends Application {
     private Connection dbConnection;
     private IncomeDAO incomeDAO;
     private ExpenceDAO expenceDAO;
+    private TransactionDAO transactionDAO;
     private ObservableList<Transaction> transactions = FXCollections.observableArrayList();
 
     @Override
@@ -41,7 +43,8 @@ public class HelloApplication extends Application {
         try {
             dbConnection = DBConnection.getConnection(); // connect to DB
             incomeDAO = new IncomeDAOImplement(dbConnection); // initialize DAO
-            expenceDAO = new ExpenceDAOImplement(dbConnection); // initialize expense DAO
+            expenceDAO = new ExpenceDAOImplement(dbConnection);// initialize expense DAO
+            transactionDAO = new TransactionDAOImplement(dbConnection);
             Monthly_Smmery m = new Monthly_Smmery();
             m.monthlySummaryAndReset(dbConnection);
 
@@ -394,9 +397,9 @@ public class HelloApplication extends Application {
             HBox transactionBox = new HBox(10);
             transactionBox.setStyle("-fx-border-color: #ddd; -fx-padding: 8px;");
 
-            Label typeLabel = new Label(t.type);
-            Label amountLabel = new Label(String.format("৳%.2f", t.amount));
-            Label dateLabel = new Label(t.date);
+            Label typeLabel = new Label(t.getType());
+            Label amountLabel = new Label(String.format("৳%.2f", t.getAmount()));
+            Label dateLabel = new Label(t.getDate());
 
             Button deleteBtn = new Button("Delete");
             deleteBtn.setStyle("-fx-background-color: #9e9e9e; -fx-text-fill: white;");
@@ -406,10 +409,10 @@ public class HelloApplication extends Application {
                 Alert alert = new Alert(Alert.AlertType.CONFIRMATION, "Delete this transaction?", ButtonType.YES, ButtonType.NO);
                 alert.showAndWait().ifPresent(response -> {
                     if (response == ButtonType.YES) {
-                        deleteTransactionFromDatabase(t);
+                        transactionDAO.deleteTransactionFromDatabase(t);
 
-                        if (t.amount > 0) totalSavings -= t.amount;
-                        else totalSavings += Math.abs(t.amount);
+                        if (t.getAmount() > 0) totalSavings -= t.getAmount();
+                        else totalSavings += Math.abs(t.getAmount());
 
                         transactions.remove(t);
                         refreshSavingsLabel();
@@ -418,23 +421,12 @@ public class HelloApplication extends Application {
                 });
             });
 
-            amountLabel.setTextFill(t.amount > 0 ? javafx.scene.paint.Color.GREEN : javafx.scene.paint.Color.RED);
+            amountLabel.setTextFill(t.getAmount() > 0 ? javafx.scene.paint.Color.GREEN : javafx.scene.paint.Color.RED);
 
             transactionBox.getChildren().addAll(typeLabel, amountLabel, dateLabel, deleteBtn);
             transactionsContainer.getChildren().add(0, transactionBox);
         }
         refreshSavingsLabel();
-    }
-
-    private void deleteTransactionFromDatabase(Transaction t) {
-        String sql = "DELETE FROM " + t.table + " WHERE id = ?";
-        try (PreparedStatement st = dbConnection.prepareStatement(sql)) {
-            st.setInt(1, t.id);
-            st.executeUpdate();
-            System.out.println("Deleted from database: " + t.table + ", id=" + t.id);
-        } catch (SQLException e) {
-            System.out.println("Error deleting transaction: " + e.getMessage());
-        }
     }
 
     private void refreshSavingsLabel() {
@@ -491,22 +483,6 @@ public class HelloApplication extends Application {
         launch(args);
     }
 
-    // Data Models
-    static class Transaction {
-        int id;
-        String type;
-        double amount;
-        String date;
-        String table;
-
-        Transaction(int id, String type, double amount, String date, String table) {
-            this.id = id;
-            this.type = type;
-            this.amount = amount;
-            this.date = date;
-            this.table = table;
-        }
-    }
 
     static class CategoryExpense {
         String category;

@@ -13,10 +13,8 @@ public class SavingsDAO {
     public double calculateSavings() {
         double totalSavings = 0;
 
-        // ✅ Include past months' saved values from the monthly summary
         totalSavings += getTotal(conn, "monthly_summery", "savings");
 
-        // ✅ Calculate current month's income and expenses
         LocalDate now = LocalDate.now();
         int currentYear = now.getYear();
         int currentMonth = now.getMonthValue();
@@ -39,7 +37,6 @@ public class SavingsDAO {
         return totalSavings;
     }
 
-    // Helper to get total sum from any table+column
     private static double getTotal(Connection conn, String table, String column) {
         String sql = "SELECT SUM(" + column + ") AS total FROM " + table;
         try (PreparedStatement stmt = conn.prepareStatement(sql);
@@ -53,7 +50,6 @@ public class SavingsDAO {
         return 0;
     }
 
-    // Helper to get current month's total from a table
     private double getMonthlyTotal(String table, String column, int year, int month) {
         String sql = "SELECT SUM(" + column + ") AS total FROM " + table +
                 " WHERE YEAR(STR_TO_DATE(date, '%Y-%m-%d')) = ? AND MONTH(STR_TO_DATE(date, '%Y-%m-%d')) = ?";
