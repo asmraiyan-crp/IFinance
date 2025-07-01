@@ -41,9 +41,9 @@ public class HelloApplication extends Application {
         DBConnection.initializeDatabase(); // create db and tables
 
         try {
-            dbConnection = DBConnection.getConnection(); // connect to DB
-            incomeDAO = new IncomeDAOImplement(dbConnection); // initialize DAO
-            expenceDAO = new ExpenceDAOImplement(dbConnection);// initialize expense DAO
+            dbConnection = DBConnection.getConnection();
+            incomeDAO = new IncomeDAOImplement(dbConnection);
+            expenceDAO = new ExpenceDAOImplement(dbConnection);
             transactionDAO = new TransactionDAOImplement(dbConnection);
             Monthly_Smmery m = new Monthly_Smmery();
             m.monthlySummaryAndReset(dbConnection);
@@ -313,9 +313,9 @@ public class HelloApplication extends Application {
             if(year == LocalDate.now().getYear() && month == LocalDate.now().getMonthValue()){
                 reportArea.getChildren().setAll(
                         new Label("Month: " + month + " " + year),
-                        new Label(String.format("Total Income: $%.2f", income)),
-                        new Label(String.format("Total Expense: $%.2f", expense)),
-                        new Label(String.format("Net Savings: $%.2f", savings))
+                        new Label(String.format("Total Income: ৳%.2f", income)),
+                        new Label(String.format("Total Expense: ৳%.2f", expense)),
+                        new Label(String.format("Net Savings: ৳%.2f", savings))
                 );
         }else{
             String query = "SELECT * FROM monthly_summery WHERE year = ? AND month = ?";
@@ -331,10 +331,11 @@ public class HelloApplication extends Application {
 
                     reportArea.getChildren().setAll(
                             new Label("Month: " + month + " " + year),
-                            new Label(String.format("Total Income: $%.2f", income)),
-                            new Label(String.format("Total Expense: $%.2f", expense)),
-                            new Label(String.format("Net Savings: $%.2f", savings))
+                            new Label(String.format("Total Income: ৳%.2f", income)),
+                            new Label(String.format("Total Expense: ৳%.2f", expense)),
+                            new Label(String.format("Net Savings: ৳%.2f", savings))
                     );
+                    //System.out.println("printed summary of "+ month);
                 } else {
                     reportArea.getChildren().setAll(new Label("No data found for selected month."));
                 }

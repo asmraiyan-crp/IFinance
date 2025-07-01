@@ -11,7 +11,6 @@ public interface ExpenceDAO {
     void addExpenceFood(Expence expence);
     void addExpenceTour(Expence expence);
     void addExpenceRefreshment(Expence expence);
-    void addExpenceLoan(Expence expence);
     void addExpenceHousehold(Expence expence);
     void addExpenceOthers(Expence expence);
 double getTotalExpenseByCategoryAndMonth(String category, int year, int month);

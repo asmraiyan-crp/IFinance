@@ -75,7 +75,7 @@ public class Monthly_Smmery {
         }
 
         double totalSavings = totalIncome - totalExpense;
-
+        //System.out.println(prevMonth);
         String sql = "INSERT INTO monthly_summery (year, month, income, expence, savings) VALUES (?, ?, ?, ?, ?)";
         try (PreparedStatement prept = conn.prepareStatement(sql)) {
             prept.setInt(1, prevMonth.getYear());

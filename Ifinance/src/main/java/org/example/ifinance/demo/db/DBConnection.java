@@ -8,7 +8,7 @@ import java.sql.Statement;
 public class DBConnection {
     private static final String URL = "jdbc:mysql://localhost:3306/";
     private static final String USER = "root";         // <-- your MySQL username
-    private static final String PASSWORD = "root";   // <-- your MySQL password
+    private static final String PASSWORD = "@smsql";   // <-- your MySQL password
     private static final String DB_NAME = "finance_app";
 
     // Call this method once at startup to create DB + tables if needed
@@ -108,19 +108,6 @@ public class DBConnection {
                                 "amount DOUBLE NOT NULL)"
                 );dbStmt.executeUpdate(
                         "CREATE TABLE IF NOT EXISTS refreshment_m (" +
-                                "id INT AUTO_INCREMENT PRIMARY KEY, " +
-                                "year INT NOT NULL, " +
-                                "month INT NOT NULL, " +
-                                "amount DOUBLE NOT NULL)"
-                );
-                //Create loan table
-                dbStmt.executeUpdate(
-                        "CREATE TABLE IF NOT EXISTS loan (" +
-                                "id INT AUTO_INCREMENT PRIMARY KEY, " +
-                                "date VARCHAR(50), " +
-                                "amount DOUBLE NOT NULL)"
-                );dbStmt.executeUpdate(
-                        "CREATE TABLE IF NOT EXISTS loan_m (" +
                                 "id INT AUTO_INCREMENT PRIMARY KEY, " +
                                 "year INT NOT NULL, " +
                                 "month INT NOT NULL, " +

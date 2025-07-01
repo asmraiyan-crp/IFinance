@@ -28,8 +28,7 @@ public class IncomeDAOImplement implements IncomeDAO {
 
     @Override
     public double getTotalIncomeByMonth(int year, int month) {
-        String sql =
-                "SELECT SUM(amount) AS total FROM income " +
+        String sql = "SELECT SUM(amount) AS total FROM income " +
                         "WHERE YEAR(STR_TO_DATE(date, '%Y-%m-%d')) = ? " +
                         "  AND MONTH(STR_TO_DATE(date, '%Y-%m-%d')) = ?";
         try (PreparedStatement ps = conn.prepareStatement(sql)) {

@@ -14,12 +14,14 @@ public class SavingsDAO {
         double totalSavings = 0;
 
         totalSavings += getTotal(conn, "monthly_summery", "savings");
+        System.out.println("monthly_summary savings "+totalSavings);
 
         LocalDate now = LocalDate.now();
         int currentYear = now.getYear();
         int currentMonth = now.getMonthValue();
 
-        double currentIncome = getMonthlyTotal("income", "amount", currentYear, currentMonth);
+        //double currentIncome = getMonthlyTotal("income", "amount", currentYear, currentMonth);
+        double currentIncome = getTotal(conn,"income","amount");
 
         String[] expenseTables = {
                 "transport", "education", "food", "tour",
@@ -28,11 +30,13 @@ public class SavingsDAO {
 
         double currentExpenses = 0;
         for (String table : expenseTables) {
-            currentExpenses += getMonthlyTotal(table, "amount", currentYear, currentMonth);
+            //currentExpenses += getMonthlyTotal(table, "amount", currentYear, currentMonth);
+            currentExpenses += getTotal(conn,table,"amount");
         }
 
         double currentNetSavings = currentIncome - currentExpenses;
         totalSavings += currentNetSavings;
+        System.out.println("current savings "+ currentNetSavings);
 
         return totalSavings;
     }
@@ -50,19 +54,4 @@ public class SavingsDAO {
         return 0;
     }
 
-    private double getMonthlyTotal(String table, String column, int year, int month) {
-        String sql = "SELECT SUM(" + column + ") AS total FROM " + table +
-                " WHERE YEAR(STR_TO_DATE(date, '%Y-%m-%d')) = ? AND MONTH(STR_TO_DATE(date, '%Y-%m-%d')) = ?";
-        try (PreparedStatement stmt = conn.prepareStatement(sql)) {
-            stmt.setInt(1, year);
-            stmt.setInt(2, month);
-            ResultSet rs = stmt.executeQuery();
-            if (rs.next()) {
-                return rs.getDouble("total");
-            }
-        } catch (SQLException e) {
-            System.out.println("Error in getMonthlyTotal for " + table + ": " + e.getMessage());
-        }
-        return 0;
-    }
 }

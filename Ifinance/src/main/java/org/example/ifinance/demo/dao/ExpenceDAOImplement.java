@@ -73,17 +73,6 @@ public class ExpenceDAOImplement  implements ExpenceDAO{
         }
     }
     @Override
-    public void addExpenceLoan(Expence expence) {
-        String sql = "insert into loan (date,amount) values (?,?)";
-        try (PreparedStatement prestat = conn.prepareStatement(sql)){
-            prestat.setString(1,expence.getDate());
-            prestat.setDouble(2,expence.getAmount());
-            prestat.executeUpdate();
-        }catch(Exception e){
-            System.out.println(e.getMessage());
-        }
-    }
-    @Override
     public void addExpenceHousehold(Expence expence) {
         String sql = "insert into household (date,amount) values (?,?)";
         try (PreparedStatement prestat = conn.prepareStatement(sql)){
